@@ -7,6 +7,7 @@ DEPSRC=depsrc
 DEPINST=depinst
 
 LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lsnark -lgmpxx -lgmp
+LDLIBS += -lboost_system
 
 all:
 	$(CXX) -o test.o test.cpp -c -MMD $(CXXFLAGS)

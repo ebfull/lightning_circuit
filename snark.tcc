@@ -18,13 +18,13 @@ r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
 }
 
 template<typename ppzksnark_ppT>
-r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<ppzksnark_ppT> proving_key,
-                                                   const bit_vector &h1,
-                                                   const bit_vector &h2,
-                                                   const bit_vector &x,
-                                                   const bit_vector &r1,
-                                                   const bit_vector &r2
-                                                   )
+boost::optional<r1cs_ppzksnark_proof<ppzksnark_ppT>> generate_proof(r1cs_ppzksnark_proving_key<ppzksnark_ppT> proving_key,
+                                                                   const bit_vector &h1,
+                                                                   const bit_vector &h2,
+                                                                   const bit_vector &x,
+                                                                   const bit_vector &r1,
+                                                                   const bit_vector &r2
+                                                                   )
 {
     typedef Fr<ppzksnark_ppT> FieldT;
 
@@ -33,7 +33,9 @@ r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<pp
     g.generate_r1cs_constraints();
     g.generate_r1cs_witness(h1, h2, x, r1, r2);
 
-    assert(pb.is_satisfied());
+    if (!pb.is_satisfied()) {
+        return boost::none;
+    }
 
     return r1cs_ppzksnark_prover<ppzksnark_ppT>(proving_key, pb.primary_input(), pb.auxiliary_input());
 }

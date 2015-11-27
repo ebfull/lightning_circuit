@@ -42,11 +42,11 @@ public:
     std::shared_ptr<digest_variable<FieldT>> r1_var; /* R1 */
     std::shared_ptr<digest_variable<FieldT>> r2_var; /* R2 */
 
-    std::shared_ptr<block_variable<FieldT>> h_r1_block;
-    std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r1;
+    std::shared_ptr<block_variable<FieldT>> h_r1_block; /* 512 bit block that contains r1 + padding */
+    std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r1; /* hashing gadget for r1 */
 
-    std::shared_ptr<block_variable<FieldT>> h_r2_block;
-    std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r2;
+    std::shared_ptr<block_variable<FieldT>> h_r2_block; /* 512 bit block that contains r2 + padding */
+    std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r2; /* hashing gadget for r2 */
 
     std::shared_ptr<digest_variable<FieldT>> padding_var; /* SHA256 length padding */
 
