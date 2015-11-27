@@ -10,7 +10,9 @@ LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lsnark -lgmpxx -lgmp
 
 all:
 	$(CXX) -o test.o test.cpp -c -MMD $(CXXFLAGS)
-	$(CXX) -o test test.o $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o sha256.o sha256.cpp -c -MMD $(CXXFLAGS)
+	$(CXX) -o util.o util.cpp -c -MMD $(CXXFLAGS)
+	$(CXX) -o test test.o sha256.o util.o $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 clean:
 	$(RM) test.o test
