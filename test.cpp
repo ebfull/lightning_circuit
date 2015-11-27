@@ -52,7 +52,7 @@ int main()
             SHA256_CTX_mod ctx256;
             sha256_init(&ctx256);
             sha256_update(&ctx256, r1, 32);
-            sha256_update(&ctx256, r1, 32);
+            sha256_length_padding(&ctx256);
             sha256_final_no_padding(&ctx256, h1);
         }
 
@@ -60,7 +60,7 @@ int main()
             SHA256_CTX_mod ctx256;
             sha256_init(&ctx256);
             sha256_update(&ctx256, r2, 32);
-            sha256_update(&ctx256, r2, 32);
+            sha256_length_padding(&ctx256);
             sha256_final_no_padding(&ctx256, h2);
         }
 

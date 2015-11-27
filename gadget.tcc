@@ -10,6 +10,7 @@ l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
         this->pb.set_input_sizes(input_size_in_field_elements);
     }
 
+    padding_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "padding"));
     h1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h1"));
     h2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h2"));
     x_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "x"));
@@ -27,7 +28,7 @@ l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
 
     h_r1_block.reset(new block_variable<FieldT>(pb, {
         r1_var->bits,
-        r1_var->bits
+        padding_var->bits
     }, "h_r1_block"));
 
     h_r1.reset(new sha256_compression_function_gadget<FieldT>(pb,
@@ -38,7 +39,7 @@ l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
 
     h_r2_block.reset(new block_variable<FieldT>(pb, {
         r2_var->bits,
-        r2_var->bits
+        padding_var->bits
     }, "h_r2_block"));
 
     h_r2.reset(new sha256_compression_function_gadget<FieldT>(pb,
@@ -52,6 +53,7 @@ template<typename FieldT>
 void l_gadget<FieldT>::generate_r1cs_constraints()
 {
     unpack_inputs->generate_r1cs_constraints(true);
+    padding_var->generate_r1cs_constraints();
     h1_var->generate_r1cs_constraints();
     h2_var->generate_r1cs_constraints();
     x_var->generate_r1cs_constraints();
@@ -59,6 +61,14 @@ void l_gadget<FieldT>::generate_r1cs_constraints()
     r2_var->generate_r1cs_constraints();
 
     for (unsigned int i = 0; i < sha256_digest_len; i++) {
+        // padding constraint:
+        this->pb.add_r1cs_constraint(
+            r1cs_constraint<FieldT>(
+                { padding_var->bits[i] },
+                { 1 },
+                { sha256_padding[i] ? 1 : 0 }),
+            FMT(this->annotation_prefix, " constrain_padding_%zu", i));
+
         // XOR:
         // (2*b)*c = b+c - a
 
@@ -87,6 +97,10 @@ void l_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
     x_var->bits.fill_with_bits(this->pb, x);
     r1_var->bits.fill_with_bits(this->pb, r1);
     r2_var->bits.fill_with_bits(this->pb, r2);
+
+    for (unsigned int i = 0; i < sha256_digest_len; i++) {
+        this->pb.val(padding_var->bits[i]) = sha256_padding[i] ? 1 : 0;
+    }
 
     h_r1->generate_r1cs_witness();
     h_r2->generate_r1cs_witness();

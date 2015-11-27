@@ -3,6 +3,29 @@
 
 const size_t sha256_digest_len = 256;
 
+/*
+computed by:
+
+        unsigned long long bitlen = 256;
+
+        unsigned char padding[32] = {0x80, 0x00, 0x00, 0x00, // 24 bytes of padding
+                                     0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x00, 0x00, 0x00,
+                                     bitlen >> 56, bitlen >> 48, bitlen >> 40, bitlen >> 32, // message length
+                                     bitlen >> 24, bitlen >> 16, bitlen >> 8, bitlen
+                                    };
+
+        std::vector<bool> padding_bv(256);
+
+        convertBytesToVector(padding, padding_bv);
+
+        printVector(padding_bv);
+*/
+bool sha256_padding[256] = {true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false};
+
 using namespace libsnark;
 
 template<typename FieldT>
@@ -25,7 +48,7 @@ public:
     std::shared_ptr<block_variable<FieldT>> h_r2_block;
     std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r2;
 
-
+    std::shared_ptr<digest_variable<FieldT>> padding_var; /* SHA256 length padding */
 
 
     l_gadget(protoboard<FieldT> &pb);
