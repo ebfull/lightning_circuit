@@ -8,3 +8,8 @@ on my computer (Intel(R) Core(TM) i7-3770S CPU @ 3.10GHz):
 * **proof size**: 287 bytes
 * **proving key size**: ~12 megabytes
 * **verifying key size**: ~574 bytes
+
+
+howto:
+
+``make && ./test``
