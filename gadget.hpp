@@ -19,6 +19,9 @@ public:
     std::shared_ptr<digest_variable<FieldT>> r1_var; /* R1 */
     std::shared_ptr<digest_variable<FieldT>> r2_var; /* R2 */
 
+    std::shared_ptr<block_variable<FieldT>> h_r1_block;
+    std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r1;
+
     /*
     std::shared_ptr<digest_variable<FieldT>> r1_var;
     std::shared_ptr<digest_variable<FieldT>> h1_var;

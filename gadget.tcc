@@ -27,13 +27,15 @@ example_gadget<FieldT>::example_gadget(protoboard<FieldT> &pb) :
 /*
     pb_linear_combination_array<FieldT> IV = SHA256_default_IV(pb);
 
-    r1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r1"));
-    h1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h1"));
-    h_r1_block.reset(new block_variable<FieldT>(pb, {r1_var->bits}, "h_r1_block"));
+    h_r1_block.reset(new block_variable<FieldT>(pb, {
+        r1_var->bits
+    }, "h_r1_block"));
+
     h_r1.reset(new sha256_compression_function_gadget<FieldT>(pb,
                                                               IV,
                                                               h_r1_block->bits,
-                                                              *h1_var, "h_r1"));
+                                                              *h1_var,
+                                                              "h_r1"));
 */
 }
 
@@ -46,6 +48,8 @@ void example_gadget<FieldT>::generate_r1cs_constraints()
     x_var->generate_r1cs_constraints();
     r1_var->generate_r1cs_constraints();
     r2_var->generate_r1cs_constraints();
+
+    //h_r1->generate_r1cs_constraints();
 }
 
 template<typename FieldT>
@@ -61,6 +65,8 @@ void example_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
     x_var->bits.fill_with_bits(this->pb, x);
     r1_var->bits.fill_with_bits(this->pb, r1);
     r2_var->bits.fill_with_bits(this->pb, r2);
+
+    //h_r1->generate_r1cs_witness();
 
     unpack_inputs->generate_r1cs_witness_from_bits();
 }
