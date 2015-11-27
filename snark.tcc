@@ -1,5 +1,7 @@
 #include "gadget.hpp"
 
+using namespace std;
+
 template<typename ppzksnark_ppT>
 r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
 {
@@ -9,6 +11,8 @@ r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
     l_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
     const r1cs_constraint_system<FieldT> constraint_system = pb.get_constraint_system();
+
+    cout << "Number of R1CS constraints: " << constraint_system.num_constraints() << endl;
 
     return r1cs_ppzksnark_generator<ppzksnark_ppT>(constraint_system);
 }
