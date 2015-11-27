@@ -1,0 +1,1 @@
+``ZkPoK{ (R1, R2): h1 = sha(R1) and h2 = sha(R2) and R1 = R2 xor X }``
