@@ -49,14 +49,14 @@ fn into_bin(a: &Vec<u8>) {
 	for a in a.iter() {
 		print!("{}{}, {}, {}, {}, {}, {}, {}, {}",
 			{if (!first) { ", " } else {first = false; ""}},
-			{if (a & (2u8.pow(7))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(6))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(5))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(4))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(3))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(2))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(1))) > 0 { 1 } else { 0 }},
-			{if (a & (2u8.pow(0))) > 0 { 1 } else { 0 }});
+			{a & (2u8.pow(7)) > 0},
+			{a & (2u8.pow(6)) > 0},
+			{a & (2u8.pow(5)) > 0},
+			{a & (2u8.pow(4)) > 0},
+			{a & (2u8.pow(3)) > 0},
+			{a & (2u8.pow(2)) > 0},
+			{a & (2u8.pow(1)) > 0},
+			{a & (2u8.pow(0)) > 0});
 	}
 	println!("}};");
 /*

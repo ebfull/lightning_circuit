@@ -15,15 +15,19 @@ r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
 
 template<typename ppzksnark_ppT>
 r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<ppzksnark_ppT> proving_key,
-                                                   const bit_vector &h1
-                                                  )
+                                                   const bit_vector &h1,
+                                                   const bit_vector &h2,
+                                                   const bit_vector &x,
+                                                   const bit_vector &r1,
+                                                   const bit_vector &r2
+                                                   )
 {
     typedef Fr<ppzksnark_ppT> FieldT;
 
     protoboard<FieldT> pb;
     example_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
-    g.generate_r1cs_witness(h1);
+    g.generate_r1cs_witness(h1, h2, x, r1, r2);
 
     assert(pb.is_satisfied());
 
@@ -33,13 +37,15 @@ r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<pp
 template<typename ppzksnark_ppT>
 bool verify_proof(r1cs_ppzksnark_verification_key<ppzksnark_ppT> verification_key,
                   r1cs_ppzksnark_proof<ppzksnark_ppT> proof,
-                  const bit_vector &h1
+                  const bit_vector &h1,
+                  const bit_vector &h2,
+                  const bit_vector &x
                   // ...
                  )
 {
     typedef Fr<ppzksnark_ppT> FieldT;
 
-    const r1cs_primary_input<FieldT> input = example_input_map<FieldT>(h1);
+    const r1cs_primary_input<FieldT> input = example_input_map<FieldT>(h1, h2, x);
 
     return r1cs_ppzksnark_verifier_strong_IC<ppzksnark_ppT>(verification_key, input, proof);
 }

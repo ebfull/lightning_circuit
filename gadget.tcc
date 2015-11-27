@@ -3,7 +3,7 @@ example_gadget<FieldT>::example_gadget(protoboard<FieldT> &pb) :
         gadget<FieldT>(pb, FMT(annotation_prefix, " example_gadget"))
 {
     // Allocate space for the verifier input.
-    const size_t input_size_in_bits = sha256_digest_len;
+    const size_t input_size_in_bits = sha256_digest_len * 3;
     {
         const size_t input_size_in_field_elements = div_ceil(input_size_in_bits, FieldT::capacity());
         input_as_field_elements.allocate(pb, input_size_in_field_elements, "input_as_field_elements");
@@ -11,7 +11,13 @@ example_gadget<FieldT>::example_gadget(protoboard<FieldT> &pb) :
     }
 
     h1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h1"));
+    h2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h2"));
+    x_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "x"));
+    r1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r1"));
+    r2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r2"));
     input_as_bits.insert(input_as_bits.end(), h1_var->bits.begin(), h1_var->bits.end());
+    input_as_bits.insert(input_as_bits.end(), h2_var->bits.begin(), h2_var->bits.end());
+    input_as_bits.insert(input_as_bits.end(), x_var->bits.begin(), x_var->bits.end());
 
     // Multipacking
     assert(input_as_bits.size() == input_size_in_bits);
@@ -36,23 +42,43 @@ void example_gadget<FieldT>::generate_r1cs_constraints()
 {
     unpack_inputs->generate_r1cs_constraints(true);
     h1_var->generate_r1cs_constraints();
+    h2_var->generate_r1cs_constraints();
+    x_var->generate_r1cs_constraints();
+    r1_var->generate_r1cs_constraints();
+    r2_var->generate_r1cs_constraints();
 }
 
 template<typename FieldT>
-void example_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1
+void example_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
+                                                   const bit_vector &h2,
+                                                   const bit_vector &x,
+                                                   const bit_vector &r1,
+                                                   const bit_vector &r2
                                                   )
 {
     h1_var->bits.fill_with_bits(this->pb, h1);
+    h2_var->bits.fill_with_bits(this->pb, h2);
+    x_var->bits.fill_with_bits(this->pb, x);
+    r1_var->bits.fill_with_bits(this->pb, r1);
+    r2_var->bits.fill_with_bits(this->pb, r2);
 
     unpack_inputs->generate_r1cs_witness_from_bits();
 }
 
 template<typename FieldT>
-r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1)
+r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1,
+                                             const bit_vector &h2,
+                                             const bit_vector &x
+                                            )
 {
     assert(h1.size() == sha256_digest_len);
+    assert(h2.size() == sha256_digest_len);
+    assert(x.size() == sha256_digest_len);
+
     bit_vector input_as_bits;
     input_as_bits.insert(input_as_bits.end(), h1.begin(), h1.end());
+    input_as_bits.insert(input_as_bits.end(), h2.begin(), h2.end());
+    input_as_bits.insert(input_as_bits.end(), x.begin(), x.end());
     std::vector<FieldT> input_as_field_elements = pack_bit_vector_into_field_element_vector<FieldT>(input_as_bits);
     return input_as_field_elements;
 }

@@ -13,6 +13,11 @@ public:
     std::shared_ptr<multipacking_gadget<FieldT> > unpack_inputs; /* multipacking gadget */
 
     std::shared_ptr<digest_variable<FieldT>> h1_var; /* H(R1) */
+    std::shared_ptr<digest_variable<FieldT>> h2_var; /* H(R2) */
+
+    std::shared_ptr<digest_variable<FieldT>> x_var; /* X */
+    std::shared_ptr<digest_variable<FieldT>> r1_var; /* R1 */
+    std::shared_ptr<digest_variable<FieldT>> r2_var; /* R2 */
 
     /*
     std::shared_ptr<digest_variable<FieldT>> r1_var;
@@ -25,10 +30,18 @@ public:
 
     example_gadget(protoboard<FieldT> &pb);
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const bit_vector &h1);
+    void generate_r1cs_witness(const bit_vector &h1,
+                               const bit_vector &h2,
+                               const bit_vector &x,
+                               const bit_vector &r1,
+                               const bit_vector &r2
+                              );
 };
 
 template<typename FieldT>
-r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1);
+r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1,
+                                             const bit_vector &h2,
+                                             const bit_vector &x
+                                            );
 
 #include "gadget.tcc"
