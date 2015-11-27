@@ -58,6 +58,18 @@ void example_gadget<FieldT>::generate_r1cs_constraints()
     r1_var->generate_r1cs_constraints();
     r2_var->generate_r1cs_constraints();
 
+    for (unsigned int i = 0; i < sha256_digest_len; i++) {
+        // XOR:
+        // (2*b)*c = b+c - a
+
+        this->pb.add_r1cs_constraint(
+            r1cs_constraint<FieldT>(
+                { r2_var->bits[i] * 2 }, // 2*b
+                { x_var->bits[i] }, // c
+                { r2_var->bits[i], x_var->bits[i], r1_var->bits[i] * (-1) }), // b+c - a
+            FMT(this->annotation_prefix, " xor_%zu", i));
+    }
+
     h_r1->generate_r1cs_constraints();
     h_r2->generate_r1cs_constraints();
 }
