@@ -70,7 +70,7 @@ int main()
         convertBytesToVector(r1, r1_bv);
         convertBytesToVector(r2, r2_bv);
     }
-
+    
     auto proof = generate_proof<default_r1cs_ppzksnark_pp>(keypair.pk, h1_bv, h2_bv, x_bv, r1_bv, r2_bv);
 
     assert(verify_proof(keypair.vk, proof, h1_bv, h2_bv, x_bv));
