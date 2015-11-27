@@ -3,9 +3,9 @@
 template<typename ppzksnark_ppT>
 r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
 {
-	typedef Fr<ppzksnark_ppT> FieldT;
+    typedef Fr<ppzksnark_ppT> FieldT;
 
-	protoboard<FieldT> pb;
+    protoboard<FieldT> pb;
     example_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
     const r1cs_constraint_system<FieldT> constraint_system = pb.get_constraint_system();
@@ -18,10 +18,10 @@ r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<pp
                                                    const bit_vector &h1
                                                   )
 {
-	typedef Fr<ppzksnark_ppT> FieldT;
+    typedef Fr<ppzksnark_ppT> FieldT;
 
-	protoboard<FieldT> pb;
-	example_gadget<FieldT> g(pb);
+    protoboard<FieldT> pb;
+    example_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
     g.generate_r1cs_witness(h1);
 
