@@ -6,7 +6,7 @@ r1cs_ppzksnark_keypair<ppzksnark_ppT> generate_keypair()
     typedef Fr<ppzksnark_ppT> FieldT;
 
     protoboard<FieldT> pb;
-    example_gadget<FieldT> g(pb);
+    l_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
     const r1cs_constraint_system<FieldT> constraint_system = pb.get_constraint_system();
 
@@ -25,7 +25,7 @@ r1cs_ppzksnark_proof<ppzksnark_ppT> generate_proof(r1cs_ppzksnark_proving_key<pp
     typedef Fr<ppzksnark_ppT> FieldT;
 
     protoboard<FieldT> pb;
-    example_gadget<FieldT> g(pb);
+    l_gadget<FieldT> g(pb);
     g.generate_r1cs_constraints();
     g.generate_r1cs_witness(h1, h2, x, r1, r2);
 
@@ -45,7 +45,7 @@ bool verify_proof(r1cs_ppzksnark_verification_key<ppzksnark_ppT> verification_ke
 {
     typedef Fr<ppzksnark_ppT> FieldT;
 
-    const r1cs_primary_input<FieldT> input = example_input_map<FieldT>(h1, h2, x);
+    const r1cs_primary_input<FieldT> input = l_input_map<FieldT>(h1, h2, x);
 
     return r1cs_ppzksnark_verifier_strong_IC<ppzksnark_ppT>(verification_key, input, proof);
 }

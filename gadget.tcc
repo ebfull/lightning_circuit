@@ -1,6 +1,6 @@
 template<typename FieldT>
-example_gadget<FieldT>::example_gadget(protoboard<FieldT> &pb) :
-        gadget<FieldT>(pb, FMT(annotation_prefix, " example_gadget"))
+l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
+        gadget<FieldT>(pb, FMT(annotation_prefix, " l_gadget"))
 {
     // Allocate space for the verifier input.
     const size_t input_size_in_bits = sha256_digest_len * 3;
@@ -49,7 +49,7 @@ example_gadget<FieldT>::example_gadget(protoboard<FieldT> &pb) :
 }
 
 template<typename FieldT>
-void example_gadget<FieldT>::generate_r1cs_constraints()
+void l_gadget<FieldT>::generate_r1cs_constraints()
 {
     unpack_inputs->generate_r1cs_constraints(true);
     h1_var->generate_r1cs_constraints();
@@ -75,7 +75,7 @@ void example_gadget<FieldT>::generate_r1cs_constraints()
 }
 
 template<typename FieldT>
-void example_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
+void l_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
                                                    const bit_vector &h2,
                                                    const bit_vector &x,
                                                    const bit_vector &r1,
@@ -95,7 +95,7 @@ void example_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
 }
 
 template<typename FieldT>
-r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1,
+r1cs_primary_input<FieldT> l_input_map(const bit_vector &h1,
                                              const bit_vector &h2,
                                              const bit_vector &x
                                             )

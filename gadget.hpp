@@ -6,7 +6,7 @@ const size_t sha256_digest_len = 256;
 using namespace libsnark;
 
 template<typename FieldT>
-class example_gadget : public gadget<FieldT> {
+class l_gadget : public gadget<FieldT> {
 public:
     pb_variable_array<FieldT> input_as_field_elements; /* R1CS input */
     pb_variable_array<FieldT> input_as_bits; /* unpacked R1CS input */
@@ -25,10 +25,10 @@ public:
     std::shared_ptr<block_variable<FieldT>> h_r2_block;
     std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r2;
 
-    
 
 
-    example_gadget(protoboard<FieldT> &pb);
+
+    l_gadget(protoboard<FieldT> &pb);
     void generate_r1cs_constraints();
     void generate_r1cs_witness(const bit_vector &h1,
                                const bit_vector &h2,
@@ -39,7 +39,7 @@ public:
 };
 
 template<typename FieldT>
-r1cs_primary_input<FieldT> example_input_map(const bit_vector &h1,
+r1cs_primary_input<FieldT> l_input_map(const bit_vector &h1,
                                              const bit_vector &h2,
                                              const bit_vector &x
                                             );
