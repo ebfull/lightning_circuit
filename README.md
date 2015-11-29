@@ -23,9 +23,9 @@ on my computer (Intel(R) Core(TM) i7-3770S CPU @ 3.10GHz):
 
 ## anatomy
 
-* `gadget.hpp` exposes the gadget, which is an abstraction of related constraint
+* `src/gadget.hpp` exposes the gadget, which is an abstraction of related constraint
 and witness behavior in a circuit. This gadget uses other gadgets, creates its own
 constraints, and exposes an interface for building input maps.
 
-* `snark.hpp` exposes a loose wrapper around the constraint system and
+* `src/snark.hpp` exposes a loose wrapper around the constraint system and
 key generation used by `test.cpp` to construct proofs and verify them as necessary.

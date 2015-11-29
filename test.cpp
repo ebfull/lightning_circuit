@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "snark.hpp"
+#include "src/snark.hpp"
 #include "sha256.h"
 
 using namespace libsnark;
