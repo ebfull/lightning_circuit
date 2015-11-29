@@ -105,8 +105,6 @@ void l_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
                                                   )
 {
     // Fill our digests with our witnessed data
-    h1_var->bits.fill_with_bits(this->pb, h1);
-    h2_var->bits.fill_with_bits(this->pb, h2);
     x_var->bits.fill_with_bits(this->pb, x);
     r1_var->bits.fill_with_bits(this->pb, r1);
     r2_var->bits.fill_with_bits(this->pb, r2);
@@ -120,6 +118,9 @@ void l_gadget<FieldT>::generate_r1cs_witness(const bit_vector &h1,
     h_r1->generate_r1cs_witness();
     h_r2->generate_r1cs_witness();
     unpack_inputs->generate_r1cs_witness_from_bits();
+
+    h1_var->bits.fill_with_bits(this->pb, h1);
+    h2_var->bits.fill_with_bits(this->pb, h2);
 }
 
 template<typename FieldT>

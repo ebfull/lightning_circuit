@@ -93,7 +93,9 @@ bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
         }
     }
 
+    cout << "Trying to generate proof..." << endl;
     auto proof = generate_proof<default_r1cs_ppzksnark_pp>(keypair.pk, h1_bv, h2_bv, x_bv, r1_bv, r2_bv);
+    cout << "Proof generated!" << endl;
 
     if (!proof) {
         return false;
@@ -102,7 +104,9 @@ bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
             // test that we can't verify with bogus inputs
             return verify_proof(keypair.vk, *proof, h2_bv, h1_bv, x_bv);
         } else {
-            return verify_proof(keypair.vk, *proof, h1_bv, h2_bv, x_bv);
+            // verification should not fail if the proof is generated
+            assert(verify_proof(keypair.vk, *proof, h1_bv, h2_bv, x_bv));
+            return true;
         }
     }
 }
