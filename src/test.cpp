@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "src/snark.hpp"
+#include "snark.hpp"
 #include "test.h"
 
 using namespace libsnark;
