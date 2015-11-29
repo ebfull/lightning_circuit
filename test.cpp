@@ -2,17 +2,31 @@
 #include <iostream>
 
 #include "src/snark.hpp"
+#include "test.h"
 
 using namespace libsnark;
 using namespace std;
 
-bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
+int main()
+{
+    // Initialize the curve parameters.
+    default_r1cs_ppzksnark_pp::init_public_params();
+    // Generate the verifying/proving keys. (This is trusted setup!)
+    auto keypair = generate_keypair<default_r1cs_ppzksnark_pp>();
 
-          // These are just for changing behavior
-          // for testing purposes:
-          bool use_and_instead_of_xor=false,
-          bool swap_r1_r2=false,
-          bool goofy_verification_inputs=false
+    // Run test vectors.
+    assert(run_test(keypair, false, false, false));
+    assert(!run_test(keypair, true, false, false));
+    assert(!run_test(keypair, false, true, false));
+    assert(!run_test(keypair, false, false, true));
+}
+
+bool run_test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
+              // These are just for changing behavior
+              // for testing purposes:
+              bool use_and_instead_of_xor,
+              bool swap_r1_r2,
+              bool goofy_verification_inputs
     ) {
 
     // Initialize bit_vectors for all of the variables involved.
@@ -66,18 +80,4 @@ bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
             return true;
         }
     }
-}
-
-int main()
-{
-    // Initialize the curve parameters.
-    default_r1cs_ppzksnark_pp::init_public_params();
-    // Generate the verifying/proving keys. (This is trusted setup!)
-    auto keypair = generate_keypair<default_r1cs_ppzksnark_pp>();
-
-    // Run test vectors.
-    assert(test(keypair));
-    assert(!test(keypair, true));
-    assert(!test(keypair, false, true));
-    assert(!test(keypair, false, false, true));
 }
