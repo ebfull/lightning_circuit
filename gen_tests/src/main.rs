@@ -54,27 +54,21 @@ fn gen(test: Test) {
         hash.result_bytes()
     };
 
-    print!("h1_bv = "); into_bin(&h1);
-    print!("h2_bv = "); into_bin(&h2);
-    print!("x_bv = "); into_bin(&x);
-    print!("r1_bv = "); into_bin(&r1);
-    print!("r2_bv = "); into_bin(&r2);
+    print!("h1_bv = int_list_to_bits("); into_bin(&h1);
+    print!("h2_bv = int_list_to_bits("); into_bin(&h2);
+    print!("x_bv = int_list_to_bits("); into_bin(&x);
+    print!("r1_bv = int_list_to_bits("); into_bin(&r1);
+    print!("r2_bv = int_list_to_bits("); into_bin(&r2);
 }
 
 fn into_bin(a: &Vec<u8>) {
     let mut first = true;
     print!("{{");
     for a in a.iter() {
-        print!("{}{}, {}, {}, {}, {}, {}, {}, {}",
-            {if !first { ", " } else {first = false; ""}},
-            {if (a & (2u8.pow(7))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(6))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(5))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(4))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(3))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(2))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(1))) > 0 { 1 } else { 0 }},
-            {if (a & (2u8.pow(0))) > 0 { 1 } else { 0 }});
+        print!("{}{}",
+                {if !first { ", " } else {first = false; ""}},
+                a
+                );
     }
-    println!("}};");
+    println!("}}, 8);");
 }
