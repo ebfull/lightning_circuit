@@ -115,7 +115,6 @@ int main()
     assert(test(keypair));
     assert(!test(keypair, true));
     assert(!test(keypair, false, true));
-    assert(!test(keypair, false, true));
     assert(!test(keypair, false, false, true));
     assert(!test(keypair, false, false, false, true));
 }
