@@ -5,17 +5,21 @@ l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
     // Allocate space for the verifier input.
     const size_t input_size_in_bits = sha256_digest_len * 3;
     {
+        // We use a "multipacking" technique which allows us to constrain
+        // the input bits in as few field elements as possible.
         const size_t input_size_in_field_elements = div_ceil(input_size_in_bits, FieldT::capacity());
         input_as_field_elements.allocate(pb, input_size_in_field_elements, "input_as_field_elements");
         this->pb.set_input_sizes(input_size_in_field_elements);
     }
 
+    // SHA256's length padding is replicated manually with a padding variable.
     padding_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "padding"));
+
+    // Verifier (and prover) inputs:
     h1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h1"));
     h2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h2"));
     x_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "x"));
-    r1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r1"));
-    r2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r2"));
+
     input_as_bits.insert(input_as_bits.end(), h1_var->bits.begin(), h1_var->bits.end());
     input_as_bits.insert(input_as_bits.end(), h2_var->bits.begin(), h2_var->bits.end());
     input_as_bits.insert(input_as_bits.end(), x_var->bits.begin(), x_var->bits.end());
@@ -23,6 +27,11 @@ l_gadget<FieldT>::l_gadget(protoboard<FieldT> &pb) :
     // Multipacking
     assert(input_as_bits.size() == input_size_in_bits);
     unpack_inputs.reset(new multipacking_gadget<FieldT>(this->pb, input_as_bits, input_as_field_elements, FieldT::capacity(), FMT(this->annotation_prefix, " unpack_inputs")));
+
+
+    // Prover inputs:
+    r1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r1"));
+    r2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r2"));
 
     // IV for SHA256
     pb_linear_combination_array<FieldT> IV = SHA256_default_IV(pb);
@@ -60,11 +69,9 @@ void l_gadget<FieldT>::generate_r1cs_constraints()
     // Multipacking constraints (for input validation)
     unpack_inputs->generate_r1cs_constraints(true);
 
-    // Ensure bitness of the digests
+    // Ensure bitness of the digests. Bitness of the inputs
+    // is established by `unpack_inputs->generate_r1cs_constraints(true)`
     padding_var->generate_r1cs_constraints();
-    h1_var->generate_r1cs_constraints();
-    h2_var->generate_r1cs_constraints();
-    x_var->generate_r1cs_constraints();
     r1_var->generate_r1cs_constraints();
     r2_var->generate_r1cs_constraints();
 

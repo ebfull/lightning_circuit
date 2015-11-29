@@ -10,9 +10,9 @@ LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lsnark -lgmpxx -lgmp
 LDLIBS += -lboost_system
 
 all:
-	$(CXX) -o test.o test.cpp -c -MMD $(CXXFLAGS)
-	$(CXX) -o sha256.o sha256.cpp -c -MMD $(CXXFLAGS)
-	$(CXX) -o util.o util.cpp -c -MMD $(CXXFLAGS)
+	$(CXX) -o test.o test.cpp -c $(CXXFLAGS)
+	$(CXX) -o sha256.o sha256.cpp -c $(CXXFLAGS)
+	$(CXX) -o util.o util.cpp -c $(CXXFLAGS)
 	$(CXX) -o test test.o sha256.o util.o $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 clean:
