@@ -7,6 +7,9 @@ using namespace libsnark;
 using namespace std;
 
 bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
+
+          // These are just for changing behavior
+          // for testing purposes:
           bool use_and_instead_of_xor=false,
           bool swap_r1_r2=false,
           bool goofy_verification_inputs=false
