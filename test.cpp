@@ -3,10 +3,21 @@
 
 #include "snark.hpp"
 #include "sha256.h"
-#include "util.h"
 
 using namespace libsnark;
 using namespace std;
+
+void convertBytesToVector(const unsigned char* bytes, std::vector<bool>& v) {
+    int numBytes = v.size() / 8;
+    unsigned char c;
+    for(int i = 0; i < numBytes; i++) {
+        c = bytes[i];
+
+        for(int j = 0; j < 8; j++) {
+            v.at((i*8)+j) = ((c >> (7-j)) & 1);
+        }
+    }
+}
 
 bool test(r1cs_ppzksnark_keypair<default_r1cs_ppzksnark_pp>& keypair,
           bool use_and_instead_of_xor=false,
