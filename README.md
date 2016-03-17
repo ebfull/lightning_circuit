@@ -9,13 +9,13 @@ Read: given `H1`, `H2`, and `X`, prove you know `R1` and `R2` such that `R1` is 
 
 on my computer (Intel(R) Core(TM) i7-3770S CPU @ 3.10GHz):
 
-* **key generation time**: 11.6270s
-* **proof generation time**: 3.0968s
-* **verification time**: 0.0270s
-* **proof size**: ~287 bytes
-* **proving key size**: ~12.85 megabytes
-* **verifying key size**: ~573 bytes
-* **R1CS constraints**: 56612 (mostly sha256-related)
+* **key generation time**: 11.6551s
+* **proof generation time**: 3.0884s
+* **verification time**: 0.0262s
+* **proof size**: 2294 bits
+* **proving key size**: 102284136 bits
+* **verifying key size**: 4586 bits
+* **R1CS constraints**: 56101 (mostly sha256-related)
 
 ## howto
 
