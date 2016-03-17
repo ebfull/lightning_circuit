@@ -53,7 +53,8 @@ public:
     std::shared_ptr<block_variable<FieldT>> h_r2_block; /* 512 bit block that contains r2 + padding */
     std::shared_ptr<sha256_compression_function_gadget<FieldT>> h_r2; /* hashing gadget for r2 */
 
-    std::shared_ptr<digest_variable<FieldT>> padding_var; /* SHA256 length padding */
+    pb_variable<FieldT> zero;
+    pb_variable_array<FieldT> padding_var; /* SHA256 length padding */
 
 
     l_gadget(protoboard<FieldT> &pb) : gadget<FieldT>(pb, "l_gadget")
@@ -68,8 +69,15 @@ public:
             this->pb.set_input_sizes(input_size_in_field_elements);
         }
 
-        // SHA256's length padding is replicated manually with a padding variable.
-        padding_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "padding"));
+        zero.allocate(this->pb, FMT(this->annotation_prefix, "zero"));
+
+        // SHA256's length padding
+        for (size_t i = 0; i < 256; i++) {
+            if (sha256_padding[i])
+                padding_var.emplace_back(ONE);
+            else
+                padding_var.emplace_back(zero);
+        }
 
         // Verifier (and prover) inputs:
         h1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "h1"));
@@ -84,7 +92,6 @@ public:
         assert(input_as_bits.size() == input_size_in_bits);
         unpack_inputs.reset(new multipacking_gadget<FieldT>(this->pb, input_as_bits, input_as_field_elements, FieldT::capacity(), FMT(this->annotation_prefix, " unpack_inputs")));
 
-
         // Prover inputs:
         r1_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r1"));
         r2_var.reset(new digest_variable<FieldT>(pb, sha256_digest_len, "r2"));
@@ -95,7 +102,7 @@ public:
         // Initialize the block gadget for r1's hash
         h_r1_block.reset(new block_variable<FieldT>(pb, {
             r1_var->bits,
-            padding_var->bits
+            padding_var
         }, "h_r1_block"));
 
         // Initialize the hash gadget for r1's hash
@@ -108,7 +115,7 @@ public:
         // Initialize the block gadget for r2's hash
         h_r2_block.reset(new block_variable<FieldT>(pb, {
             r2_var->bits,
-            padding_var->bits
+            padding_var
         }, "h_r2_block"));
 
         // Initialize the hash gadget for r2's hash
@@ -125,23 +132,12 @@ public:
 
         // Ensure bitness of the digests. Bitness of the inputs
         // is established by `unpack_inputs->generate_r1cs_constraints(true)`
-        padding_var->generate_r1cs_constraints();
         r1_var->generate_r1cs_constraints();
         r2_var->generate_r1cs_constraints();
 
-        for (unsigned int i = 0; i < sha256_digest_len; i++) {
-            // SHA256 has a length padding at the end, which
-            // is a variable in our protoboard. We need to
-            // constrain the padding so a malicious user
-            // cannot demonstrate a witness of a different
-            // padding.
-            this->pb.add_r1cs_constraint(
-                r1cs_constraint<FieldT>(
-                    { padding_var->bits[i] },
-                    { 1 },
-                    { sha256_padding[i] ? 1 : 0 }),
-                FMT(this->annotation_prefix, " constrain_padding_%zu", i));
+        generate_r1cs_equals_const_constraint<FieldT>(this->pb, zero, FieldT::zero(), "zero");
 
+        for (unsigned int i = 0; i < sha256_digest_len; i++) {
             // This is the constraint that R1 = R2 ^ X.
             // (2*b)*c = b+c - a
             this->pb.add_r1cs_constraint(
@@ -168,10 +164,8 @@ public:
         r1_var->bits.fill_with_bits(this->pb, r1);
         r2_var->bits.fill_with_bits(this->pb, r2);
 
-        // Fill the padding
-        for (unsigned int i = 0; i < sha256_digest_len; i++) {
-            this->pb.val(padding_var->bits[i]) = sha256_padding[i] ? 1 : 0;
-        }
+        // Set the zero pb_variable to zero
+        this->pb.val(zero) = FieldT::zero();
 
         // Generate witnesses as necessary in our other gadgets
         h_r1->generate_r1cs_witness();
