@@ -1,3 +1,5 @@
+This simple SNARK application was made in response to a lightning-dev forum post, https://lists.linuxfoundation.org/pipermail/lightning-dev/2015-November/000309.html where AJ Towns suggested using SNARKs to implement a variant of the lightning protocol. The exact application doesn't matter too much, but in the thread there was an initial attempt at benchmarking, which seemed to suggest ridiculous numbers, like 100+MB for a proof about a single hash. So, this project was made to set the record straight about what performance could be expected.
+
 This is a SNARK implementation using libsnark for the following:
 
 ``ZkPoK{ (R1, R2): H1 = sha256(R1) and H2 = sha256(R2) and R1 = R2 ^ X }``
